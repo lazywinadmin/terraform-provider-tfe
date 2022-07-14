@@ -1,3 +1,8 @@
+## 0.3X.X (Unreleased)
+
+* r/tfe_workspace: Added attribute for drift detection setting ([550](https://github.com/hashicorp/terraform-provider-tfe/pull/550))
+* d/tfe_workspace: Added attribute for drift detection setting ([550](https://github.com/hashicorp/terraform-provider-tfe/pull/550))
+
 ## 0.33.0 (July 8th, 2022)
 
 FEATURES:
