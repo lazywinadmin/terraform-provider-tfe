@@ -44,6 +44,19 @@ func resourceTFEWorkspaceRunTask() *schema.Resource {
 					false,
 				),
 			},
+
+			"stage": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  tfe.PostPlan,
+				ValidateFunc: validation.StringInSlice(
+					[]string{
+						string(tfe.PrePlan),
+						string(tfe.PostPlan),
+					},
+					false,
+				),
+			},
 		},
 	}
 }
@@ -65,10 +78,12 @@ func resourceTFEWorkspaceRunTaskCreate(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf(
 			"Error retrieving workspace %s: %w", workspaceID, err)
 	}
+	stage := tfe.Stage(d.Get("stage").(string))
 
 	options := tfe.WorkspaceRunTaskCreateOptions{
 		RunTask:          task,
 		EnforcementLevel: tfe.TaskEnforcementLevel(d.Get("enforcement_level").(string)),
+		Stage:            &stage,
 	}
 
 	log.Printf("[DEBUG] Create task %s in workspace %s", task.ID, ws.ID)
@@ -108,6 +123,9 @@ func resourceTFEWorkspaceRunTaskUpdate(d *schema.ResourceData, meta interface{})
 	if d.HasChange("enforcement_level") {
 		options.EnforcementLevel = tfe.TaskEnforcementLevel(d.Get("enforcement_level").(string))
 	}
+	if d.HasChange("stage") {
+		options.Stage = tfe.Stage(d.Get("stage").(string))
+	}
 
 	log.Printf("[DEBUG] Update configuration of task %s in workspace %s", d.Id(), workspaceID)
 	_, err := tfeClient.WorkspaceRunTasks.Update(ctx, workspaceID, d.Id(), options)
@@ -138,6 +156,7 @@ func resourceTFEWorkspaceRunTaskRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("workspace_id", wstask.Workspace.ID)
 	d.Set("task_id", wstask.RunTask.ID)
 	d.Set("enforcement_level", string(wstask.EnforcementLevel))
+	d.Set("stage", string(wstask.Stage))
 
 	return nil
 }

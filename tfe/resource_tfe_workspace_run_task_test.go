@@ -30,12 +30,14 @@ func TestAccTFEWorkspaceRunTask_create(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckTFEWorkspaceRunTaskExists("tfe_workspace_run_task.foobar", workspaceTask),
 					resource.TestCheckResourceAttr("tfe_workspace_run_task.foobar", "enforcement_level", "advisory"),
+					resource.TestCheckResourceAttr("tfe_workspace_run_task.foobar", "stage", "post_plan"),
 				),
 			},
 			{
 				Config: testAccTFEWorkspaceRunTask_update(orgName, runTasksURL()),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("tfe_workspace_run_task.foobar", "enforcement_level", "mandatory"),
+					resource.TestCheckResourceAttr("tfe_workspace_run_task.foobar", "stage", "pre_plan"),
 				),
 			},
 		},
@@ -146,6 +148,7 @@ resource "tfe_workspace_run_task" "foobar" {
   workspace_id      = resource.tfe_workspace.foobar.id
   task_id           = resource.tfe_organization_run_task.foobar.id
   enforcement_level = "advisory"
+	stage             = "post_plan"
 }
 `, orgName, runTaskURL)
 }
@@ -172,6 +175,7 @@ resource "tfe_workspace_run_task" "foobar" {
   workspace_id      = resource.tfe_workspace.foobar.id
   task_id           = resource.tfe_organization_run_task.foobar.id
   enforcement_level = "mandatory"
+	stage             = "pre_plan"
 }
 `, orgName, runTaskURL)
 }
