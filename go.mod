@@ -77,3 +77,6 @@ require (
 	google.golang.org/genproto v0.0.0-20210319143718-93e7006c17a6 // indirect
 	google.golang.org/grpc v1.36.0 // indirect
 )
+
+// DEBUG
+replace "github.com/hashicorp/go-tfe" v1.5.0 => "../go-tfe"
